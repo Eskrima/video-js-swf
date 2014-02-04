@@ -103,6 +103,7 @@ package com.videojs.providers{
               case HLSStates.BUFFERING:
                 _networkState = NetworkState.NETWORK_LOADING;
                 _readyState = ReadyState.HAVE_CURRENT_DATA;
+                _model.broadcastEventExternally(ExternalEventName.ON_BUFFER);
                 break;
               case HLSStates.PLAYING:
                 _networkState = NetworkState.NETWORK_LOADING;
