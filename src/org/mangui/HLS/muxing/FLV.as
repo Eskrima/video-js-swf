@@ -1,27 +1,12 @@
 package org.mangui.HLS.muxing {
-
-
     import flash.utils.ByteArray;
-
 
     /** Helpers for the FLV file format. **/
     public class FLV {
-
-
-        /** Return an EOS Video tag (16 bytes). **/
-        public static function getEosTag(stamp:Number):ByteArray {
-            var tag:ByteArray = FLV.getTagHeader(false,5,stamp);
-            // AVC Keyframe.
-            tag.writeByte(0x17);
-            // Sequence end, composition time
-            tag.writeUnsignedInt(0x02000000);
-            return tag;
-        };
-
-
         /** Get the FLV file header. **/
-        public static function getHeader():ByteArray {
-            var flv:ByteArray = new ByteArray();
+        public static function getHeader() : ByteArray {
+            var flv : ByteArray = new ByteArray();
+            flv.length = 13;
             // "F" + "L" + "V".
             flv.writeByte(0x46);
             flv.writeByte(0x4C);
@@ -37,14 +22,14 @@ package org.mangui.HLS.muxing {
             return flv;
         };
 
-
         /** Get an FLV Tag header (11 bytes). **/
-        public static function getTagHeader(audio:Boolean,length:Number,stamp:Number):ByteArray {
-            var tag:ByteArray = new ByteArray();
+        public static function getTagHeader(audio : Boolean, length : Number, stamp : Number) : ByteArray {
+            var tag : ByteArray = new ByteArray();
+            tag.length = 11;
             // Audio (8) or Video (9) tag
-            if(audio) { 
+            if (audio) {
                 tag.writeByte(8);
-            } else { 
+            } else {
                 tag.writeByte(9);
             }
             // Size of the tag in bytes after StreamID.
@@ -63,9 +48,5 @@ package org.mangui.HLS.muxing {
             // All done
             return tag;
         };
-
-
     }
-
-
 }
