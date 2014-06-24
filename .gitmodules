@@ -1,6 +1,0 @@
-[submodule "HLSprovider"]
-    path = src/HLSprovider
-    url = https://github.com/mangui/HLSprovider.git
-[submodule "as3-crypto"]
-    path = src/as3-crypto
-    url = https://github.com/timkurvers/as3-crypto.git
