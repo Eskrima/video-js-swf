@@ -44,7 +44,8 @@ package com.videojs{
         private var _rtmpConnectionURL:String = "";
         private var _rtmpStream:String = "";
         private var _poster:String = "";
-        
+        private var _parameters:Object;
+
         private static var _instance:VideoJSModel;
         
         public function VideoJSModel(pLock:SingletonLock){
@@ -105,6 +106,14 @@ package com.videojs{
 
         public function appendBuffer(bytes:ByteArray):void{
             _provider.appendBuffer(bytes);
+        }
+
+        public function endOfStream():void {
+            _provider.endOfStream();
+        }
+
+        public function abort():void {
+            _provider.abort();
         }
         
         public function get backgroundColor():Number{
@@ -167,6 +176,12 @@ package com.videojs{
                 return _provider.duration;
             }
             return 0;
+        }
+
+        public function set duration(value:Number):void {
+            if(_provider && _provider is HTTPVideoProvider) {
+                (_provider as HTTPVideoProvider).duration = value;
+            }
         }
         
         public function get autoplay():Boolean{
@@ -268,6 +283,13 @@ package com.videojs{
         public function set poster(pValue:String):void{
             _poster = pValue;
             broadcastEvent(new VideoJSEvent(VideoJSEvent.POSTER_SET));
+        }
+        
+        public function get parameters():Object{
+            return _parameters;
+        }
+        public function set parameters(pValue:Object):void{
+            _parameters = pValue;
         }
         
         public function get hasEnded():Boolean{
@@ -524,6 +546,51 @@ package com.videojs{
             }
         }
 
+        /**
+         * Returns the number of stream levels that this content has.
+         */
+        public function get numberOfLevels():int
+        {
+            if(_provider){
+                return _provider.numberOfLevels;
+            }
+            return 1;
+        }
+
+        /**
+         * Returns the currently used stream level.
+         */
+        public function get level():int
+        {
+            if(_provider){
+                return _provider.level;
+            }
+            return 0;
+        }
+
+        /**
+         * Select the stream level.
+         * If -1 is specified, it means auto selection.
+         * If a level is specified (0-based index), that level is used and auto selection is disabled.
+         */
+        public function set level(pLevel:int):void
+        {
+            if(_provider){
+                _provider.level = pLevel;
+            }
+        }
+
+        /**
+          * Returns whether auto selection is currently enabled or not.
+          */
+        public function get autoLevelEnabled():Boolean
+        {
+            if(_provider){
+                return _provider.autoLevelEnabled;
+            }
+            return false;
+        }
+
         public function hexToNumber(pHex:String):Number{
             var __number:Number = 0;
             // clean it up
@@ -582,7 +649,8 @@ package com.videojs{
                     }
                     else if(_currentPlaybackType == PlaybackType.HLS){
                         __src = {
-                            m3u8: _src
+                            m3u8: _src,
+                            parameters: _parameters
                         };
                         _provider = new HLSProvider();
                         _provider.attachVideo(_videoReference);

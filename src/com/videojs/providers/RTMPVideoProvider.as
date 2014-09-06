@@ -137,6 +137,14 @@ package com.videojs.providers{
         public function appendBuffer(bytes:ByteArray):void{
             throw "RTMPVideoProvider does not support appendBuffer";
         }
+
+        public function endOfStream():void{
+            throw "RTMPVideoProvider does not support endOfStream";
+        }
+
+        public function abort():void{
+            throw "RTMPVideoProvider does not support abort";
+        }
         
         public function get buffered():Number{
             if(duration > 0){
@@ -379,6 +387,25 @@ package com.videojs.providers{
             }
         }
                 
+        // This provider supports a stream with single level.
+        public function get numberOfLevels():int{
+            return 1;
+        }
+        public function get level():int{
+            return 0;
+        }
+        public function set level(pLevel:int):void
+        {
+            if (pLevel != 0)
+            {
+                throw "Wrong level.";
+            }
+        }
+        public function get autoLevelEnabled():Boolean
+        {
+            return false;
+        }
+
         private function initNetConnection():void{
             if(_nc == null){
                 _nc = new NetConnection();

@@ -171,6 +171,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-npm');
   grunt.loadNpmTasks('grunt-shell');
   grunt.loadNpmTasks('grunt-prompt');
+  grunt.loadNpmTasks('chg');
 
   grunt.registerTask('dist', ['mxmlc']);
   grunt.registerTask('default', ['dist']);
@@ -208,7 +209,7 @@ module.exports = function (grunt) {
         cmdLineOpts.push('-output');
         cmdLineOpts.push(f.dest);
       }
-      cmdLineOpts.push('-library-path+=libs/HLSProvider.swc');
+      cmdLineOpts.push('-library-path+=libs/flashls.swc');
       cmdLineOpts.push('-define=CONFIG::version, "' + pkg.version + '"');
       cmdLineOpts.push('--');
       cmdLineOpts.push.apply(cmdLineOpts, srcList);
@@ -277,16 +278,17 @@ module.exports = function (grunt) {
       'shell:git-diff-exit-code',         // ensure there's no unadded changes
       'shell:git-diff-cached-exit-code',  // ensure there's no added changes
       'shell:git-checkout-stable',        // must start on the stable branch
+      'chg-release:'+type,                // add release to changelog
       'bumpup:'+type,                     // bump up the package version
       'dist',                             // build distribution
       'shell:git-add-dist-force',         // force add the distribution
       'tagrelease',                       // commit & tag the changes
-      'shell:git-push-stable',
-      'shell:git-push-tags',
-      'npm-publish',
-      'shell:git-checkout-master',
-      'shell:git-merge-stable',
-      'shell:git-push-master'
+      'shell:git-push-stable',            // push changes to stable
+      'shell:git-push-tags',              // push version tag
+      'npm-publish',                      // publish to npm
+      'shell:git-checkout-master',        // switch to master branch
+      'shell:git-merge-stable',           // merge stable into master
+      'shell:git-push-master'             // push changes to master
     ]);
   });
 
